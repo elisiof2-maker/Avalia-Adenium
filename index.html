@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adenium Avalia - Feedbacks de Produtores</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header / Navbar Minimalista Profissional -->
+  <nav class="navbar">
+    <div class="nav-container">
+      
+      <!-- Marca / Logo -->
+      <div class="brand">
+        <span class="logo-icon">🌸</span>
+        <span class="logo-text">Adenium <strong>Avalia</strong></span>
+      </div>
+
+      <!-- Barra de Pesquisa (Desktop e Expansível no Mobile) -->
+      <div class="nav-search-wrapper" id="searchWrapper">
+        <div class="nav-search-box">
+          <span class="search-btn-icon">🔍</span>
+          <input type="text" id="searchInput" onkeyup="filtrarEBuscar()" onfocus="showFilterMenu()" placeholder="Buscar produtor ou cidade...">
+          <button class="close-search-mobile" onclick="toggleMobileSearch(false)">&times;</button>
+        </div>
+
+        <!-- Menu Suspenso de Filtros -->
+        <div class="filter-dropdown" id="filterDropdown">
+          <small>Filtrar exibição por:</small>
+          <button class="filter-opt active" id="btnAll" onclick="setFiltroOrdem('todos')">🌐 Todas as Avaliações</button>
+          <button class="filter-opt" id="btnBest" onclick="setFiltroOrdem('melhores')">⭐ Melhores Avaliados</button>
+          <button class="filter-opt" id="btnWorst" onclick="setFiltroOrdem('piores')">⚠️ Piores Avaliados</button>
+        </div>
+      </div>
+
+      <!-- Ações do Canto Direito (Lupa Mobile + Perfil do Usuário) -->
+      <div class="nav-actions">
+        <!-- Lupa de Busca para Acionar no Celular -->
+        <button class="mobile-search-toggle" onclick="toggleMobileSearch(true)" title="Pesquisar">
+          🔍
+        </button>
+
+        <!-- Menu/Perfil de Usuário -->
+        <div class="auth-area" id="authArea">
+          <!-- Injetado via JS -->
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- Hero Banner Compacto -->
+  <header class="hero-compact">
+    <div class="hero-content">
+      <h1>Reputação de Produtores de Adenium</h1>
+      <p>Feedbacks construtivos, alertas e avaliações de compra.</p>
+    </div>
+  </header>
+
+  <!-- Modal de Login e Cadastro -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="tab-buttons">
+          <button class="tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">Entrar</button>
+          <button class="tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">Criar Conta</button>
+        </div>
+        <button class="close-btn" onclick="toggleAuthModal()">&times;</button>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">E-mail:</label>
+          <input type="email" id="loginEmail" placeholder="elisio@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Senha:</label>
+          <input type="password" id="loginPassword" placeholder="Sua senha" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Entrar na Conta</button>
+      </form>
+
+      <form id="registerForm" style="display: none;">
+        <div class="form-group">
+          <label for="regName">Nome Completo:</label>
+          <input type="text" id="regName" placeholder="Seu nome" required>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">E-mail:</label>
+          <input type="email" id="regEmail" placeholder="seuemail@exemplo.com" required>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Criar Senha:</label>
+          <input type="password" id="regPassword" placeholder="Crie uma senha segura" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Concluir Cadastro</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-wrapper">
+    <div class="dashboard-grid">
+      
+      <!-- Formulário Lateral -->
+      <aside class="sidebar-area">
+        <section class="card">
+          <div class="card-header">
+            <h2>Novo Feedback</h2>
+            <p>Deixe um elogio, sugestão construtiva ou alerta.</p>
+          </div>
+          <form id="reviewForm">
+            <div class="form-group">
+              <label for="producerName">Nome do Produtor de Adenium:</label>
+              <input type="text" id="producerName" placeholder="Ex: Viveiro Adenium - Fortaleza/CE" required>
+            </div>
+
+            <div class="form-group">
+              <label for="rating">Classificação do Atendimento/Planta:</label>
+              <select id="rating" required>
+                <option value="5">⭐⭐⭐⭐⭐ Excelente (5/5)</option>
+                <option value="4">⭐⭐⭐⭐ Bom (4/5)</option>
+                <option value="3">⭐⭐⭐ Regular / Construtivo (3/5)</option>
+                <option value="2">⭐⭐ Ruim / Alerta (2/5)</option>
+                <option value="1">⭐ Péssimo (1/5)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="reviewText">Seu relato (Construtivo ou Negativo):</label>
+              <textarea id="reviewText" rows="4" placeholder="Descreva sua experiência: ponto forte, o que precisa melhorar ou alertas sobre envio/qualidade..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+          </form>
+        </section>
+      </aside>
+
+      <!-- Feed / Painel de Moderação -->
+      <section class="feed-area">
+        <div class="feed-header">
+          <h2 id="feedTitle">Feedbacks Verificados</h2>
+          <span class="feed-count" id="feedCount">0 publicações</span>
+        </div>
+        
+        <div id="reviewsList" class="reviews-stack"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <p><strong>Adenium Avalia 🌸</strong> — Espaço para feedbacks construtivos e reputação de produtores de Adenium.</p>
+      <p>&copy; 2026 Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
