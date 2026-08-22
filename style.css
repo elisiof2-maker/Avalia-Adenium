@@ -1,0 +1,120 @@
+:root {
+  --primary: #1b5e20;
+  --primary-accent: #2e7d32;
+  --nav-bg: #0d3b11;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --bg-card: #ffffff;
+  --border-color: #cbd5e1;
+  --radius: 12px;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+body { background: #f1f5f9; color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
+
+.navbar {
+  background: linear-gradient(90deg, var(--nav-bg) 0%, #1b5e20 100%);
+  color: white; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.nav-container {
+  max-width: 1280px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+}
+
+.brand { font-size: 1.3rem; display: flex; align-items: center; gap: 0.5rem; }
+.brand strong { color: #a5d6a7; }
+
+/* Menu Suspenso (Dropdown) com Clique */
+.user-dropdown { position: relative; display: inline-block; }
+
+.dropdown-btn {
+  background: #2e7d32; color: #ffffff; border: 1px solid #a5d6a7;
+  padding: 0.5rem 1.2rem; border-radius: 20px; font-weight: 600; font-size: 0.9rem; cursor: pointer;
+}
+
+.dropdown-content {
+  display: none; position: absolute; right: 0; top: 125%;
+  background-color: #ffffff; min-width: 240px; box-shadow: 0px 10px 25px rgba(0,0,0,0.25);
+  border-radius: 12px; z-index: 10000; border: 1px solid #cbd5e1; overflow: hidden;
+}
+
+.dropdown-content.show { display: block; }
+
+.menu-user-info { padding: 10px 16px; background: #f8fafc; color: #334155; }
+.menu-user-info small { display: block; color: #64748b; font-size: 0.75rem; }
+.menu-user-info strong { font-size: 0.85rem; word-break: break-all; }
+
+.dropdown-content hr { border: none; border-top: 1px solid #e2e8f0; margin: 0; }
+
+.dropdown-content button {
+  color: #0f172a; padding: 12px 16px; width: 100%; text-align: left;
+  background: none; border: none; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.dropdown-content button:hover { background-color: #f1f5f9; }
+
+.btn-highlight-pending { background: #fffbeb !important; color: #b45309 !important; }
+
+.dropdown-content .logout-btn { color: #dc2626; border-top: 1px solid #e2e8f0; }
+
+.badge-count { background: #ef4444; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; }
+
+/* Hero e Busca com Lupa */
+.hero { background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%); color: white; padding: 2.5rem 1.5rem; text-align: center; }
+.hero-content { max-width: 750px; margin: 0 auto; }
+
+.search-box {
+  background: white; border-radius: 30px; display: flex; align-items: center; padding: 0.4rem 1.2rem; margin: 1.5rem 0 1rem 0; box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+.search-icon { font-size: 1.2rem; margin-right: 8px; }
+.search-box input { border: none; outline: none; width: 100%; font-size: 1rem; padding: 0.5rem 0; background: transparent; color: #0f172a; }
+
+/* Badges de Filtro */
+.filter-badges { display: flex; justify-content: center; gap: 0.6rem; flex-wrap: wrap; }
+.badge-btn {
+  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white;
+  padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+}
+.badge-btn.active { background: white; color: var(--primary); font-weight: 700; }
+
+/* Layout Geral */
+.main-wrapper { max-width: 1280px; margin: 2rem auto; padding: 0 1.5rem; flex: 1; width: 100%; }
+.dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+
+@media (min-width: 1024px) {
+  .dashboard-grid { grid-template-columns: 360px 1fr; }
+}
+
+.card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); }
+.form-group { margin-bottom: 1rem; }
+label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+input, select, textarea { width: 100%; padding: 0.7rem; border: 1px solid var(--border-color); border-radius: 8px; outline: none; }
+
+.btn { padding: 0.75rem 1rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; }
+.btn-primary { background: var(--primary-accent); color: white; width: 100%; }
+.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+.btn-approve { background: #16a34a; color: white; }
+.btn-reject { background: #dc2626; color: white; }
+
+/* Feed */
+.feed-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.reviews-stack { display: flex; flex-direction: column; gap: 1rem; }
+.review-item { background: white; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.2rem; border-left: 5px solid var(--primary-accent); }
+.review-item.pending { border-left-color: #f59e0b; background: #fffbeb; }
+
+.status-badge { padding: 0.2rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: 700; }
+.badge-success { background: #dcfce7; color: #15803d; }
+.badge-warning { background: #fef3c7; color: #b45309; }
+
+/* Modal */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+.modal-card { background: white; padding: 2rem; border-radius: var(--radius); width: 90%; max-width: 400px; }
+.modal-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.tab-btn { background: none; border: none; font-size: 1rem; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+.tab-btn.active { color: var(--primary-accent); border-bottom: 2px solid var(--primary-accent); }
+.close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+
+.footer { background: #0f172a; color: #94a3b8; padding: 2rem; margin-top: auto; text-align: center; font-size: 0.85rem; }
