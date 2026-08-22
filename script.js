@@ -1,7 +1,6 @@
 const ADMIN_EMAIL = "elisio@gmail.com";
 const ADMIN_PASS = "310705";
 
-// Mantém o perfil de admin salvo por padrão
 let currentUser = JSON.parse(localStorage.getItem("adenium_current_user")) || { 
   nome: "Elísio (Admin)", 
   email: "elisio@gmail.com", 
@@ -13,13 +12,13 @@ let ordemFiltro = "todos";
 
 let usuariosCadastrados = JSON.parse(localStorage.getItem("adenium_users")) || [];
 
-let avaliacoes = JSON.parse(localStorage.getItem("adenium_reviews_v7")) || [
+let avaliacoes = JSON.parse(localStorage.getItem("adenium_reviews_v9")) || [
   {
     id: 1,
-    produtor: "Orquidário Exemplo - Fortaleza/CE",
+    produtor: "Produtor Especialista - Fortaleza/CE",
     notaNumerica: 5,
     nota: "⭐⭐⭐⭐⭐",
-    texto: "Excelente atendimento! As mudas de arabicum vieram com raízes perfeitas.",
+    texto: "Excelente atendimento e enxertos perfeitos! Como crítica construtiva: apenas melhorar a embalagem da caixa para viagens longas.",
     status: "aprovado",
     autor: "Cultivador",
     data: "22/08/2026"
@@ -29,7 +28,7 @@ let avaliacoes = JSON.parse(localStorage.getItem("adenium_reviews_v7")) || [
     produtor: "Produtor X - Tailândia",
     notaNumerica: 2,
     nota: "⭐⭐",
-    texto: "Atraso no envio das sementes e baixa taxa de germinação.",
+    texto: "Alerta: Demorou muito para postar e as sementes de Adenium vieram com taxa de germinação muito baixa.",
     status: "aprovado",
     autor: "Marcos",
     data: "21/08/2026"
@@ -37,9 +36,9 @@ let avaliacoes = JSON.parse(localStorage.getItem("adenium_reviews_v7")) || [
   {
     id: 3,
     produtor: "Viveiro Y - Brasil",
-    notaNumerica: 5,
-    nota: "⭐⭐⭐⭐⭐",
-    texto: "Lote de enxertos muito bem feito. Recomendo a todos!",
+    notaNumerica: 3,
+    nota: "⭐⭐⭐",
+    texto: "Feedback construtivo: O caudex veio saudável, mas o cavalo da enxertia veio meio fraco. Vale a pena prestar atenção no substrato.",
     status: "pendente",
     autor: "João Paulo",
     data: "22/08/2026"
@@ -47,7 +46,7 @@ let avaliacoes = JSON.parse(localStorage.getItem("adenium_reviews_v7")) || [
 ];
 
 function salvarDados() {
-  localStorage.setItem("adenium_reviews_v7", JSON.stringify(avaliacoes));
+  localStorage.setItem("adenium_reviews_v9", JSON.stringify(avaliacoes));
   localStorage.setItem("adenium_users", JSON.stringify(usuariosCadastrados));
   localStorage.setItem("adenium_current_user", JSON.stringify(currentUser));
 }
@@ -66,15 +65,32 @@ function toggleDropdown(e) {
   if (menu) menu.classList.toggle("show");
 }
 
+function showFilterMenu() {
+  document.getElementById("filterDropdown").classList.add("show");
+}
+
+function toggleMobileSearch(open) {
+  const searchWrapper = document.getElementById("searchWrapper");
+  if (open) {
+    searchWrapper.classList.add("active-mobile");
+    document.getElementById("searchInput").focus();
+  } else {
+    searchWrapper.classList.remove("active-mobile");
+    document.getElementById("filterDropdown").classList.remove("show");
+  }
+}
+
+// Fecha menus ao clicar fora
 window.onclick = function(event) {
-  if (!event.target.matches('.dropdown-btn')) {
+  if (!event.target.closest('.user-dropdown')) {
     const dropdowns = document.getElementsByClassName("dropdown-content");
     for (let i = 0; i < dropdowns.length; i++) {
-      let openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
+      dropdowns[i].classList.remove('show');
     }
+  }
+  if (!event.target.closest('.nav-search-wrapper') && !event.target.closest('.mobile-search-toggle')) {
+    const filterMenu = document.getElementById("filterDropdown");
+    if (filterMenu) filterMenu.classList.remove("show");
   }
 }
 
@@ -83,11 +99,12 @@ function updateAuthUI() {
 
   if (currentUser) {
     const isAdmin = currentUser.role === 'admin';
+    const primeiroNome = currentUser.nome.split(" ")[0];
 
     authArea.innerHTML = `
       <div class="user-dropdown">
         <button class="dropdown-btn" onclick="toggleDropdown(event)">
-          👤 ${currentUser.nome} ${isAdmin ? '🛡️' : ''} ▼
+          👤 <span class="user-text-label">${primeiroNome}</span> ${isAdmin ? '🛡️' : ''} ▼
         </button>
         <div id="myDropdown" class="dropdown-content">
           <div class="menu-user-info">
@@ -96,11 +113,11 @@ function updateAuthUI() {
           </div>
           <hr>
           <button onclick="mudarAba('publicadas')">
-            ✅ Avaliações Aprovadas
+            ✅ Feedbacks Aprovados
           </button>
           ${isAdmin ? `
             <button onclick="mudarAba('moderação')" class="btn-highlight-pending">
-              ⏳ Avaliações Pendentes <span class="badge-count">${pendentesCount}</span>
+              ⏳ Moderação Pendente <span class="badge-count">${pendentesCount}</span>
             </button>
           ` : ''}
           <button class="logout-btn" onclick="logout()">
@@ -111,7 +128,7 @@ function updateAuthUI() {
     `;
     if(authModal) authModal.style.display = "none";
   } else {
-    authArea.innerHTML = `<button class="btn btn-sm" style="background:#a5d6a7; color:#0d3b11; font-weight:bold;" onclick="toggleAuthModal()">Entrar / Cadastrar</button>`;
+    authArea.innerHTML = `<button class="btn btn-sm" style="background:#a5d6a7; color:#0d3b11; font-weight:bold; border-radius:20px;" onclick="toggleAuthModal()">Entrar</button>`;
   }
 }
 
@@ -122,9 +139,12 @@ function mudarAba(modo) {
 
 function setFiltroOrdem(tipo) {
   ordemFiltro = tipo;
+  
   document.getElementById("btnAll").classList.toggle("active", tipo === 'todos');
   document.getElementById("btnBest").classList.toggle("active", tipo === 'melhores');
   document.getElementById("btnWorst").classList.toggle("active", tipo === 'piores');
+
+  document.getElementById("filterDropdown").classList.remove("show");
   renderizar();
 }
 
@@ -216,7 +236,7 @@ document.getElementById("reviewForm").addEventListener("submit", function(e) {
   updateAuthUI();
   renderizar();
   this.reset();
-  alert("Avaliação registrada! Enviada para a moderação.");
+  alert("Feedback registrado! Enviado para a moderação.");
 });
 
 function renderizar() {
@@ -238,16 +258,16 @@ function renderizar() {
   const pendentesCount = avaliacoes.filter(a => a.status === "pendente").length;
 
   if (abaModo === "moderação" && currentUser?.role === "admin") {
-    feedTitle.innerHTML = `⏳ Moderação: Avaliações Pendentes (${pendentesCount})`;
+    feedTitle.innerHTML = `⏳ Moderação: Pendentes (${pendentesCount})`;
   } else {
-    feedTitle.innerHTML = `Avaliações Verificadas`;
+    feedTitle.innerHTML = `Feedbacks Verificados`;
   }
 
   feedCount.innerText = `${lista.length} exibidos`;
 
   if (lista.length === 0) {
-    reviewsList.innerHTML = `<div style="background:white; padding:2rem; border-radius:12px; text-align:center; color:#64748b;">
-      ${abaModo === "moderação" ? "🎉 Nenhuma avaliação pendente no momento!" : "Nenhuma avaliação encontrada na busca."}
+    reviewsList.innerHTML = `<div style="background:white; padding:1.5rem; border-radius:12px; text-align:center; color:#64748b;">
+      ${abaModo === "moderação" ? "🎉 Nenhum feedback pendente no momento!" : "Nenhum feedback encontrado."}
     </div>`;
     return;
   }
@@ -255,18 +275,18 @@ function renderizar() {
   lista.forEach(item => {
     reviewsList.innerHTML += `
       <article class="review-item ${item.status === 'pendente' ? 'pending' : ''}">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
           <strong>${item.produtor}</strong>
           <span class="status-badge ${item.status === 'aprovado' ? 'badge-success' : 'badge-warning'}">
-            ${item.status === 'aprovado' ? 'Aprovado' : 'Pendente de Moderação'}
+            ${item.status === 'aprovado' ? 'Aprovado' : 'Pendente'}
           </span>
         </div>
-        <div style="margin-bottom:0.4rem;">${item.nota}</div>
-        <p style="font-size:0.95rem; color:#1e293b; margin:0.5rem 0;">${item.texto}</p>
-        <small style="color:#64748b; display:block; margin-top:0.5rem;">Enviado por ${item.autor} em ${item.data}</small>
+        <div style="margin-bottom:0.3rem;">${item.nota}</div>
+        <p style="font-size:0.88rem; color:#1e293b; margin:0.4rem 0;">${item.texto}</p>
+        <small style="color:#64748b; display:block; margin-top:0.4rem;">Enviado por ${item.autor} em ${item.data}</small>
         
         ${item.status === 'pendente' && currentUser?.role === 'admin' ? `
-          <div style="margin-top:1rem; display:flex; gap:0.5rem; padding-top:0.8rem; border-top:1px solid #f1f5f9;">
+          <div style="margin-top:0.8rem; display:flex; gap:0.5rem; padding-top:0.6rem; border-top:1px solid #f1f5f9;">
             <button class="btn btn-sm btn-approve" onclick="aprovarAvaliacao(${item.id})">Aprovar e Publicar</button>
             <button class="btn btn-sm btn-reject" onclick="rejeitarAvaliacao(${item.id})">Recusar</button>
           </div>

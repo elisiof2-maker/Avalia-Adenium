@@ -3,45 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adenium Avalia - Reputação de Produtores</title>
+  <title>Adenium Avalia - Feedbacks de Produtores</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Navbar Superior -->
+  <!-- Header / Navbar Minimalista Profissional -->
   <nav class="navbar">
     <div class="nav-container">
+      
+      <!-- Marca / Logo -->
       <div class="brand">
         <span class="logo-icon">🌸</span>
         <span class="logo-text">Adenium <strong>Avalia</strong></span>
       </div>
 
-      <!-- Menu de Perfil / Acesso Admin -->
-      <div class="auth-area" id="authArea">
-        <!-- Injetado via JS -->
+      <!-- Barra de Pesquisa (Desktop e Expansível no Mobile) -->
+      <div class="nav-search-wrapper" id="searchWrapper">
+        <div class="nav-search-box">
+          <span class="search-btn-icon">🔍</span>
+          <input type="text" id="searchInput" onkeyup="filtrarEBuscar()" onfocus="showFilterMenu()" placeholder="Buscar produtor ou cidade...">
+          <button class="close-search-mobile" onclick="toggleMobileSearch(false)">&times;</button>
+        </div>
+
+        <!-- Menu Suspenso de Filtros -->
+        <div class="filter-dropdown" id="filterDropdown">
+          <small>Filtrar exibição por:</small>
+          <button class="filter-opt active" id="btnAll" onclick="setFiltroOrdem('todos')">🌐 Todas as Avaliações</button>
+          <button class="filter-opt" id="btnBest" onclick="setFiltroOrdem('melhores')">⭐ Melhores Avaliados</button>
+          <button class="filter-opt" id="btnWorst" onclick="setFiltroOrdem('piores')">⚠️ Piores Avaliados</button>
+        </div>
       </div>
+
+      <!-- Ações do Canto Direito (Lupa Mobile + Perfil do Usuário) -->
+      <div class="nav-actions">
+        <!-- Lupa de Busca para Acionar no Celular -->
+        <button class="mobile-search-toggle" onclick="toggleMobileSearch(true)" title="Pesquisar">
+          🔍
+        </button>
+
+        <!-- Menu/Perfil de Usuário -->
+        <div class="auth-area" id="authArea">
+          <!-- Injetado via JS -->
+        </div>
+      </div>
+
     </div>
   </nav>
 
-  <!-- Hero Banner: Busca com Lupa e Filtros de Ranking -->
-  <header class="hero">
+  <!-- Hero Banner Compacto -->
+  <header class="hero-compact">
     <div class="hero-content">
-      <h1>Pesquise a reputação de produtores e orquidários</h1>
-      <p>Transparência sobre enxertia, saúde das mudas e entregas de Rosa do Deserto.</p>
-      
-      <!-- Campo de Busca -->
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" onkeyup="filtrarEBuscar()" placeholder="Buscar por produtor, orquidário ou cidade...">
-      </div>
-
-      <!-- Filtros estilo Reclame Aqui -->
-      <div class="filter-badges">
-        <button class="badge-btn active" id="btnAll" onclick="setFiltroOrdem('todos')">Todas</button>
-        <button class="badge-btn" id="btnBest" onclick="setFiltroOrdem('melhores')">⭐ Melhores Avaliados</button>
-        <button class="badge-btn" id="btnWorst" onclick="setFiltroOrdem('piores')">⚠️ Piores Avaliados</button>
-      </div>
+      <h1>Reputação de Produtores de Adenium</h1>
+      <p>Feedbacks construtivos, alertas e avaliações de compra.</p>
     </div>
   </header>
 
@@ -86,7 +101,7 @@
     </div>
   </div>
 
-  <!-- Main Container -->
+  <!-- Conteúdo Principal -->
   <main class="main-wrapper">
     <div class="dashboard-grid">
       
@@ -94,32 +109,32 @@
       <aside class="sidebar-area">
         <section class="card">
           <div class="card-header">
-            <h2>Nova Avaliação</h2>
-            <p>Relate sua experiência de compra.</p>
+            <h2>Novo Feedback</h2>
+            <p>Deixe um elogio, sugestão construtiva ou alerta.</p>
           </div>
           <form id="reviewForm">
             <div class="form-group">
-              <label for="producerName">Nome do Produtor ou Orquidário:</label>
-              <input type="text" id="producerName" placeholder="Ex: Orquidário Exemplo - Fortaleza/CE" required>
+              <label for="producerName">Nome do Produtor de Adenium:</label>
+              <input type="text" id="producerName" placeholder="Ex: Viveiro Adenium - Fortaleza/CE" required>
             </div>
 
             <div class="form-group">
-              <label for="rating">Classificação:</label>
+              <label for="rating">Classificação do Atendimento/Planta:</label>
               <select id="rating" required>
                 <option value="5">⭐⭐⭐⭐⭐ Excelente (5/5)</option>
                 <option value="4">⭐⭐⭐⭐ Bom (4/5)</option>
-                <option value="3">⭐⭐⭐ Regular (3/5)</option>
-                <option value="2">⭐⭐ Ruim (2/5)</option>
+                <option value="3">⭐⭐⭐ Regular / Construtivo (3/5)</option>
+                <option value="2">⭐⭐ Ruim / Alerta (2/5)</option>
                 <option value="1">⭐ Péssimo (1/5)</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="reviewText">Relato detalhado:</label>
-              <textarea id="reviewText" rows="4" placeholder="Descreva prazo, qualidade do caudex, enxertia ou atendimento..." required></textarea>
+              <label for="reviewText">Seu relato (Construtivo ou Negativo):</label>
+              <textarea id="reviewText" rows="4" placeholder="Descreva sua experiência: ponto forte, o que precisa melhorar ou alertas sobre envio/qualidade..." required></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
+            <button type="submit" class="btn btn-primary">Enviar Feedback</button>
           </form>
         </section>
       </aside>
@@ -127,7 +142,7 @@
       <!-- Feed / Painel de Moderação -->
       <section class="feed-area">
         <div class="feed-header">
-          <h2 id="feedTitle">Avaliações Verificadas</h2>
+          <h2 id="feedTitle">Feedbacks Verificados</h2>
           <span class="feed-count" id="feedCount">0 publicações</span>
         </div>
         
@@ -139,7 +154,7 @@
 
   <footer class="footer">
     <div class="footer-container">
-      <p><strong>Adenium Avalia 🌸</strong> — Plataforma de opinião de consumidores de Rosa do Deserto.</p>
+      <p><strong>Adenium Avalia 🌸</strong> — Espaço para feedbacks construtivos e reputação de produtores de Adenium.</p>
       <p>&copy; 2026 Todos os direitos reservados.</p>
     </div>
   </footer>
