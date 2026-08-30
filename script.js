@@ -1,300 +1,222 @@
-const ADMIN_EMAIL = "elisio@gmail.com";
-const ADMIN_PASS = "310705";
-
-let currentUser = JSON.parse(localStorage.getItem("adenium_current_user")) || { 
-  nome: "Elísio (Admin)", 
-  email: "elisio@gmail.com", 
-  role: "admin" 
-};
-
-let abaModo = "moderação";
-let ordemFiltro = "todos";
-
-let usuariosCadastrados = JSON.parse(localStorage.getItem("adenium_users")) || [];
-
-let avaliacoes = JSON.parse(localStorage.getItem("adenium_reviews_v9")) || [
+const AVALIACOES_INICIAIS = [
   {
-    id: 1,
-    produtor: "Produtor Especialista - Fortaleza/CE",
-    notaNumerica: 5,
-    nota: "⭐⭐⭐⭐⭐",
-    texto: "Excelente atendimento e enxertos perfeitos! Como crítica construtiva: apenas melhorar a embalagem da caixa para viagens longas.",
-    status: "aprovado",
-    autor: "Cultivador",
-    data: "22/08/2026"
+    id: 101,
+    autor: "Sérgio M. - Fortaleza/CE",
+    produtor: "PEAN Flores",
+    nota: 5,
+    relato: "Adquiri mudas de arabicum bem formadas. Caudex bem trabalhado e raízes perfeitas.",
+    data: "Há 2 horas",
+    status: "aprovado"
   },
   {
-    id: 2,
-    produtor: "Produtor X - Tailândia",
-    notaNumerica: 2,
-    nota: "⭐⭐",
-    texto: "Alerta: Demorou muito para postar e as sementes de Adenium vieram com taxa de germinação muito baixa.",
-    status: "aprovado",
-    autor: "Marcos",
-    data: "21/08/2026"
-  },
-  {
-    id: 3,
-    produtor: "Viveiro Y - Brasil",
-    notaNumerica: 3,
-    nota: "⭐⭐⭐",
-    texto: "Feedback construtivo: O caudex veio saudável, mas o cavalo da enxertia veio meio fraco. Vale a pena prestar atenção no substrato.",
-    status: "pendente",
-    autor: "João Paulo",
-    data: "22/08/2026"
+    id: 102,
+    autor: "Cláudia R. - Caucaia/CE",
+    produtor: "Orquidário & Viveiro M.A.",
+    nota: 4,
+    relato: "Chegou dentro do prazo e as plantas vieram bem embaladas.",
+    data: "Ontem",
+    status: "aprovado"
   }
 ];
 
-function salvarDados() {
-  localStorage.setItem("adenium_reviews_v9", JSON.stringify(avaliacoes));
-  localStorage.setItem("adenium_users", JSON.stringify(usuariosCadastrados));
-  localStorage.setItem("adenium_current_user", JSON.stringify(currentUser));
-}
+const BLOG_INICIAIS = [
+  {
+    id: 1,
+    titulo: "Como saber se o viveiro é confiável antes de comprar?",
+    resumo: "Aprenda a identificar sinais de verificação e evite fraudes em compras online de matrizes."
+  },
+  {
+    id: 2,
+    titulo: "Direitos do Comprador no Código de Defesa do Consumidor (CDC)",
+    resumo: "Entenda a garantia de 7 dias para compras na internet e como proceder em atrasos de entrega."
+  },
+  {
+    id: 3,
+    titulo: "Como usar o Reclamar / Avaliar para resolver problemas",
+    resumo: "Passo a passo de como dialogar diretamente com o produtor com apoio da plataforma."
+  }
+];
 
-const authArea = document.getElementById("authArea");
-const authModal = document.getElementById("authModal");
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-const reviewsList = document.getElementById("reviewsList");
-const feedTitle = document.getElementById("feedTitle");
-const feedCount = document.getElementById("feedCount");
+let modoAdmin = true;
 
-function toggleDropdown(e) {
-  if (e) e.stopPropagation();
-  const menu = document.getElementById("myDropdown");
-  if (menu) menu.classList.toggle("show");
-}
-
-function showFilterMenu() {
-  document.getElementById("filterDropdown").classList.add("show");
-}
-
-function toggleMobileSearch(open) {
-  const searchWrapper = document.getElementById("searchWrapper");
-  if (open) {
-    searchWrapper.classList.add("active-mobile");
-    document.getElementById("searchInput").focus();
-  } else {
-    searchWrapper.classList.remove("active-mobile");
-    document.getElementById("filterDropdown").classList.remove("show");
+function verificarStatusApp() {
+  const baixouApp = localStorage.getItem("adenium_app_baixado");
+  const banner = document.getElementById("appPromotionalBanner");
+  if (baixouApp === "true" && banner) {
+    banner.style.display = "none";
   }
 }
 
-// Fecha menus ao clicar fora
-window.onclick = function(event) {
-  if (!event.target.closest('.user-dropdown')) {
-    const dropdowns = document.getElementsByClassName("dropdown-content");
-    for (let i = 0; i < dropdowns.length; i++) {
-      dropdowns[i].classList.remove('show');
-    }
-  }
-  if (!event.target.closest('.nav-search-wrapper') && !event.target.closest('.mobile-search-toggle')) {
-    const filterMenu = document.getElementById("filterDropdown");
-    if (filterMenu) filterMenu.classList.remove("show");
+function fecharBannerApp() {
+  const banner = document.getElementById("appPromotionalBanner");
+  if (banner) {
+    banner.style.display = "none";
   }
 }
 
-function updateAuthUI() {
-  const pendentesCount = avaliacoes.filter(a => a.status === "pendente").length;
+function registrarDownloadApp(loja) {
+  localStorage.setItem("adenium_app_baixado", "true");
+  alert(`Redirecionando para download na ${loja}... O banner será ocultado automaticamente.`);
+  fecharBannerApp();
+}
 
-  if (currentUser) {
-    const isAdmin = currentUser.role === 'admin';
-    const primeiroNome = currentUser.nome.split(" ")[0];
-
-    authArea.innerHTML = `
-      <div class="user-dropdown">
-        <button class="dropdown-btn" onclick="toggleDropdown(event)">
-          👤 <span class="user-text-label">${primeiroNome}</span> ${isAdmin ? '🛡️' : ''} ▼
-        </button>
-        <div id="myDropdown" class="dropdown-content">
-          <div class="menu-user-info">
-            <small>Logado como:</small>
-            <strong>${currentUser.email}</strong>
-          </div>
-          <hr>
-          <button onclick="mudarAba('publicadas')">
-            ✅ Feedbacks Aprovados
-          </button>
-          ${isAdmin ? `
-            <button onclick="mudarAba('moderação')" class="btn-highlight-pending">
-              ⏳ Moderação Pendente <span class="badge-count">${pendentesCount}</span>
-            </button>
-          ` : ''}
-          <button class="logout-btn" onclick="logout()">
-            🚪 Sair da Conta
-          </button>
-        </div>
-      </div>
-    `;
-    if(authModal) authModal.style.display = "none";
-  } else {
-    authArea.innerHTML = `<button class="btn btn-sm" style="background:#a5d6a7; color:#0d3b11; font-weight:bold; border-radius:20px;" onclick="toggleAuthModal()">Entrar</button>`;
+function obterAvaliacoes() {
+  const dados = localStorage.getItem("adenium_avaliacoes");
+  if (!dados) {
+    localStorage.setItem("adenium_avaliacoes", JSON.stringify(AVALIACOES_INICIAIS));
+    return AVALIACOES_INICIAIS;
   }
+  return JSON.parse(dados);
 }
 
-function mudarAba(modo) {
-  abaModo = modo;
-  renderizar();
+function salvarAvaliacoes(lista) {
+  localStorage.setItem("adenium_avaliacoes", JSON.stringify(lista));
+  renderizarPlataforma();
 }
 
-function setFiltroOrdem(tipo) {
-  ordemFiltro = tipo;
-  
-  document.getElementById("btnAll").classList.toggle("active", tipo === 'todos');
-  document.getElementById("btnBest").classList.toggle("active", tipo === 'melhores');
-  document.getElementById("btnWorst").classList.toggle("active", tipo === 'piores');
+function enviarNovoFeedback() {
+  const autor = document.getElementById("inputAutor").value.trim();
+  const produtor = document.getElementById("inputProdutor").value.trim();
+  const nota = parseInt(document.getElementById("selectNota").value);
+  const relato = document.getElementById("inputRelato").value.trim();
 
-  document.getElementById("filterDropdown").classList.remove("show");
-  renderizar();
-}
+  if (!autor || !produtor || !relato) return;
 
-function filtrarEBuscar() {
-  renderizar();
-}
+  const novaSubmissao = {
+    id: Date.now(),
+    autor: autor,
+    produtor: produtor,
+    nota: nota,
+    relato: relato,
+    data: "Agora mesmo",
+    status: "pendente"
+  };
 
-function toggleAuthModal() {
-  authModal.style.display = authModal.style.display === "flex" ? "none" : "flex";
-}
+  const lista = obterAvaliacoes();
+  lista.unshift(novaSubmissao);
+  salvarAvaliacoes(lista);
 
-function switchTab(tab) {
-  document.getElementById("tabLoginBtn").classList.toggle("active", tab === 'login');
-  document.getElementById("tabRegisterBtn").classList.toggle("active", tab === 'register');
-  loginForm.style.display = tab === 'login' ? "block" : "none";
-  registerForm.style.display = tab === 'register' ? "block" : "none";
-}
-
-loginForm.addEventListener("submit", function(e) {
-  e.preventDefault();
-  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
-  const password = document.getElementById("loginPassword").value;
-
-  if (email === ADMIN_EMAIL && password === ADMIN_PASS) {
-    currentUser = { nome: "Elísio (Admin)", email: email, role: "admin" };
-    abaModo = "moderação";
-  } else {
-    const user = usuariosCadastrados.find(u => u.email === email && u.password === password);
-    if (user) {
-      currentUser = { nome: user.nome, email: user.email, role: "client" };
-      abaModo = "publicadas";
-    } else {
-      alert("E-mail ou senha incorretos.");
-      return;
-    }
-  }
-
-  salvarDados();
-  updateAuthUI();
-  renderizar();
-});
-
-function logout() {
-  currentUser = null;
-  localStorage.removeItem("adenium_current_user");
-  abaModo = "publicadas";
-  updateAuthUI();
-  renderizar();
+  document.getElementById("inputAutor").value = "";
+  document.getElementById("inputProdutor").value = "";
+  document.getElementById("inputRelato").value = "";
+  alert("Sua avaliação foi enviada com sucesso para a fila de moderação!");
 }
 
 function aprovarAvaliacao(id) {
-  avaliacoes = avaliacoes.map(a => a.id === id ? { ...a, status: "aprovado" } : a);
-  salvarDados();
-  updateAuthUI();
-  renderizar();
+  const lista = obterAvaliacoes();
+  const item = lista.find(a => a.id === id);
+  if (item) {
+    item.status = "aprovado";
+    salvarAvaliacoes(lista);
+  }
 }
 
 function rejeitarAvaliacao(id) {
-  avaliacoes = avaliacoes.filter(a => a.id !== id);
-  salvarDados();
-  updateAuthUI();
-  renderizar();
+  let lista = obterAvaliacoes();
+  lista = lista.filter(a => a.id !== id);
+  salvarAvaliacoes(lista);
 }
 
-document.getElementById("reviewForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  if (!currentUser) {
-    alert("Por favor, faça login para enviar.");
-    toggleAuthModal();
-    return;
-  }
+function renderizarPlataforma() {
+  const lista = obterAvaliacoes();
+  const pendentes = lista.filter(a => a.status === "pendente");
+  const aprovadas = lista.filter(a => a.status === "aprovado");
 
-  const produtor = document.getElementById("producerName").value;
-  const ratingValue = parseInt(document.getElementById("rating").value);
-  const texto = document.getElementById("reviewText").value;
+  document.getElementById("badgeModeracaoCount").innerText = `${pendentes.length} Pendentes`;
+  document.getElementById("countPendentesBadge").innerText = pendentes.length;
+  document.getElementById("countPendentes").innerText = pendentes.length;
+  document.getElementById("badgeAprovadasCount").innerText = `${aprovadas.length} Publicadas`;
 
-  avaliacoes.unshift({
-    id: Date.now(),
-    produtor,
-    notaNumerica: ratingValue,
-    nota: "⭐".repeat(ratingValue),
-    texto,
-    status: "pendente",
-    autor: currentUser.nome,
-    data: new Date().toLocaleDateString("pt-BR")
-  });
-
-  salvarDados();
-  updateAuthUI();
-  renderizar();
-  this.reset();
-  alert("Feedback registrado! Enviado para a moderação.");
-});
-
-function renderizar() {
-  reviewsList.innerHTML = "";
-  const termoBusca = document.getElementById("searchInput").value.toLowerCase();
-
-  let lista = avaliacoes.filter(a => {
-    const matchStatus = (abaModo === "moderação" && currentUser?.role === "admin") ? a.status === "pendente" : a.status === "aprovado";
-    const matchTexto = a.produtor.toLowerCase().includes(termoBusca) || a.texto.toLowerCase().includes(termoBusca);
-    return matchStatus && matchTexto;
-  });
-
-  if (ordemFiltro === "melhores") {
-    lista.sort((a, b) => b.notaNumerica - a.notaNumerica);
-  } else if (ordemFiltro === "piores") {
-    lista.sort((a, b) => a.notaNumerica - b.notaNumerica);
-  }
-
-  const pendentesCount = avaliacoes.filter(a => a.status === "pendente").length;
-
-  if (abaModo === "moderação" && currentUser?.role === "admin") {
-    feedTitle.innerHTML = `⏳ Moderação: Pendentes (${pendentesCount})`;
+  const containerMod = document.getElementById("listaModeracaoPendentes");
+  if (pendentes.length === 0) {
+    containerMod.innerHTML = `<div class="card-subtitle">Nenhuma avaliação pendente no momento.</div>`;
   } else {
-    feedTitle.innerHTML = `Feedbacks Verificados`;
-  }
-
-  feedCount.innerText = `${lista.length} exibidos`;
-
-  if (lista.length === 0) {
-    reviewsList.innerHTML = `<div style="background:white; padding:1.5rem; border-radius:12px; text-align:center; color:#64748b;">
-      ${abaModo === "moderação" ? "🎉 Nenhum feedback pendente no momento!" : "Nenhum feedback encontrado."}
-    </div>`;
-    return;
-  }
-
-  lista.forEach(item => {
-    reviewsList.innerHTML += `
-      <article class="review-item ${item.status === 'pendente' ? 'pending' : ''}">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem;">
-          <strong>${item.produtor}</strong>
-          <span class="status-badge ${item.status === 'aprovado' ? 'badge-success' : 'badge-warning'}">
-            ${item.status === 'aprovado' ? 'Aprovado' : 'Pendente'}
-          </span>
+    containerMod.innerHTML = pendentes.map(item => `
+      <div class="moderacao-card" style="background:#fff7ed; border:1px solid #fed7aa; padding:10px; border-radius:6px; margin-bottom:8px;">
+        <strong>${item.produtor}</strong>
+        <p style="font-size: 0.82rem; margin: 4px 0;">"${item.relato}"</p>
+        <small style="color: #666;">Por: ${item.autor} (${item.nota}/5 ⭐)</small>
+        <div style="margin-top:8px; display:flex; gap:6px;">
+          <button style="background:#16a34a; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer;" onclick="aprovarAvaliacao(${item.id})">✓ Aprovar</button>
+          <button style="background:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer;" onclick="rejeitarAvaliacao(${item.id})">✕ Rejeitar</button>
         </div>
-        <div style="margin-bottom:0.3rem;">${item.nota}</div>
-        <p style="font-size:0.88rem; color:#1e293b; margin:0.4rem 0;">${item.texto}</p>
-        <small style="color:#64748b; display:block; margin-top:0.4rem;">Enviado por ${item.autor} em ${item.data}</small>
-        
-        ${item.status === 'pendente' && currentUser?.role === 'admin' ? `
-          <div style="margin-top:0.8rem; display:flex; gap:0.5rem; padding-top:0.6rem; border-top:1px solid #f1f5f9;">
-            <button class="btn btn-sm btn-approve" onclick="aprovarAvaliacao(${item.id})">Aprovar e Publicar</button>
-            <button class="btn btn-sm btn-reject" onclick="rejeitarAvaliacao(${item.id})">Recusar</button>
-          </div>
-        ` : ''}
+      </div>
+    `).join('');
+  }
+
+  const containerFeed = document.getElementById("feedList");
+  if (aprovadas.length === 0) {
+    containerFeed.innerHTML = `<div class="card-subtitle">Nenhuma avaliação aprovada ainda.</div>`;
+  } else {
+    containerFeed.innerHTML = aprovadas.map(item => `
+      <article class="review-card">
+        <div style="display: flex; justify-content: space-between;">
+          <strong>${item.autor}</strong>
+          <span style="font-size: 0.82rem;">${'⭐'.repeat(item.nota)}</span>
+        </div>
+        <div style="font-size: 0.8rem; color: #1b8a3b; margin: 4px 0;"><strong>Avaliado:</strong> ${item.produtor}</div>
+        <p style="font-size: 0.85rem; color: #444; margin-bottom: 6px;">"${item.relato}"</p>
+        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: #888;">
+          <small>${item.data}</small>
+          <span style="color: #16a34a; font-weight: bold;">✓ Avaliação Auditada</span>
+        </div>
       </article>
-    `;
+    `).join('');
+  }
+}
+
+function filtrarAvaliacoes() {
+  const termo = document.getElementById("searchInput").value.toLowerCase();
+  const cards = document.querySelectorAll(".review-card");
+
+  cards.forEach(card => {
+    const texto = card.innerText.toLowerCase();
+    card.style.display = texto.includes(termo) ? "block" : "none";
   });
 }
 
-updateAuthUI();
-renderizar();
+function toggleAdminMenu() {
+  document.getElementById("adminDropdown").classList.toggle("active");
+}
+
+function alternarSessao() {
+  modoAdmin = !modoAdmin;
+  const painelAdmin = document.getElementById("painelAdminSection");
+
+  if (modoAdmin) {
+    painelAdmin.style.display = "block";
+    alert("Visão alterada para Administrador.");
+  } else {
+    painelAdmin.style.display = "none";
+    alert("Visão alterada para Comprador/Visitante.");
+  }
+  document.getElementById("adminDropdown").classList.remove("active");
+}
+
+function focarPainelAdmin() {
+  document.getElementById("painelAdminSection").scrollIntoView({ behavior: 'smooth' });
+  document.getElementById("adminDropdown").classList.remove("active");
+}
+
+function abrirModalAuth(tipo) {
+  alert(`Tela de ${tipo === 'login' ? 'Login' : 'Cadastro'} em processamento.`);
+}
+
+function carregarBlog() {
+  const grid = document.getElementById("fiqueGrid");
+  if (!grid) return;
+
+  grid.innerHTML = BLOG_INICIAIS.map(item => `
+    <article class="blog-card hover-lift">
+      <h3 style="font-size: 0.9rem; margin-bottom: 6px;">${item.titulo}</h3>
+      <p style="font-size: 0.78rem; color: #666; margin-bottom: 8px;">${item.resumo}</p>
+      <a href="#" style="color: #1b8a3b; font-weight: bold; font-size: 0.78rem; text-decoration: none;">Ler artigo completo →</a>
+    </article>
+  `).join('');
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  verificarStatusApp();
+  renderizarPlataforma();
+  carregarBlog();
+});

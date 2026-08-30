@@ -3,159 +3,330 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adenium Avalia - Feedbacks de Produtores</title>
+  <title>Adenium Avalia - Reputação e Transparência</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="theme-botanical">
 
-  <!-- Header / Navbar Minimalista Profissional -->
-  <nav class="navbar">
-    <div class="nav-container">
-      
-      <!-- Marca / Logo -->
-      <div class="brand">
-        <span class="logo-icon">🌸</span>
-        <span class="logo-text">Adenium <strong>Avalia</strong></span>
-      </div>
+  <div class="bg-glow-container">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+  </div>
 
-      <!-- Barra de Pesquisa (Desktop e Expansível no Mobile) -->
-      <div class="nav-search-wrapper" id="searchWrapper">
-        <div class="nav-search-box">
-          <span class="search-btn-icon">🔍</span>
-          <input type="text" id="searchInput" onkeyup="filtrarEBuscar()" onfocus="showFilterMenu()" placeholder="Buscar produtor ou cidade...">
-          <button class="close-search-mobile" onclick="toggleMobileSearch(false)">&times;</button>
+  <header class="top-header-slim">
+    <div class="header-container">
+      <a href="#" class="brand-logo">
+        <span class="flower-icon">🌸</span>
+        <span class="brand-name">Adenium<strong>Avalia</strong></span>
+      </a>
+
+      <nav class="slim-nav">
+        <div class="nav-item-dropdown">
+          <button class="nav-link-btn">Para você <span class="arrow">▾</span></button>
+          <div class="dropdown-panel">
+            <a href="#feedbackForm">Fazer Avaliação</a>
+            <a href="#feedList">Últimas Avaliações</a>
+            <a href="#reputacoesSection">Guias de Reputação</a>
+            <a href="#descontosSection">Cupons & Ofertas</a>
+          </div>
         </div>
 
-        <!-- Menu Suspenso de Filtros -->
-        <div class="filter-dropdown" id="filterDropdown">
-          <small>Filtrar exibição por:</small>
-          <button class="filter-opt active" id="btnAll" onclick="setFiltroOrdem('todos')">🌐 Todas as Avaliações</button>
-          <button class="filter-opt" id="btnBest" onclick="setFiltroOrdem('melhores')">⭐ Melhores Avaliados</button>
-          <button class="filter-opt" id="btnWorst" onclick="setFiltroOrdem('piores')">⚠️ Piores Avaliados</button>
+        <div class="nav-item-dropdown">
+          <button class="nav-link-btn">Para seu negócio <span class="arrow">▾</span></button>
+          <div class="dropdown-panel">
+            <a href="#patrocinadoresArea">Cadastrar Viveiro/Empresa</a>
+            <a href="#painelAdminSection">Responder Avaliações</a>
+            <a href="#patrocinadoresArea">Soluções de Destaque</a>
+          </div>
+        </div>
+      </nav>
+
+      <div class="header-right-actions">
+        <button class="btn-head-outline" onclick="abrirModalAuth('login')">Entrar</button>
+        <button class="btn-head-solid" onclick="abrirModalAuth('cadastro')">Criar Conta</button>
+
+        <div class="admin-profile-wrapper">
+          <button class="admin-badge-btn" onclick="toggleAdminMenu()">
+            🛡️ Moderação <span class="badge-pill" id="countPendentesBadge">0</span> ▾
+          </button>
+          
+          <div class="admin-menu-dropdown" id="adminDropdown">
+            <div class="admin-user-info">
+              <strong>Elísio Nunes</strong>
+              <small>elisiof2@gmail.com</small>
+            </div>
+            <a href="#painelAdminSection" onclick="focarPainelAdmin()">Fila de Moderação (<span id="countPendentes">0</span>)</a>
+            <button class="btn-toggle-view" onclick="alternarSessao()">Switch: Admin / Comprador</button>
+          </div>
         </div>
       </div>
-
-      <!-- Ações do Canto Direito (Lupa Mobile + Perfil do Usuário) -->
-      <div class="nav-actions">
-        <!-- Lupa de Busca para Acionar no Celular -->
-        <button class="mobile-search-toggle" onclick="toggleMobileSearch(true)" title="Pesquisar">
-          🔍
-        </button>
-
-        <!-- Menu/Perfil de Usuário -->
-        <div class="auth-area" id="authArea">
-          <!-- Injetado via JS -->
-        </div>
-      </div>
-
-    </div>
-  </nav>
-
-  <!-- Hero Banner Compacto -->
-  <header class="hero-compact">
-    <div class="hero-content">
-      <h1>Reputação de Produtores de Adenium</h1>
-      <p>Feedbacks construtivos, alertas e avaliações de compra.</p>
     </div>
   </header>
 
-  <!-- Modal de Login e Cadastro -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="tab-buttons">
-          <button class="tab-btn active" id="tabLoginBtn" onclick="switchTab('login')">Entrar</button>
-          <button class="tab-btn" id="tabRegisterBtn" onclick="switchTab('register')">Criar Conta</button>
+  <section class="hero-compact">
+    <div class="hero-compact-container">
+      <div class="hero-text-side">
+        <h2>Seja para pesquisar ou avaliar, <span>facilitamos o caminho para você</span></h2>
+        
+        <div class="main-search-bar">
+          <input type="text" id="searchInput" onkeyup="filtrarAvaliacoes()" placeholder="Qual empresa ou produtor de Adenium você procura?">
+          <button type="button" class="btn-search" onclick="filtrarAvaliacoes()">🔍 Buscar</button>
         </div>
-        <button class="close-btn" onclick="toggleAuthModal()">&times;</button>
+
+        <div class="quick-tools-grid">
+          <a href="#feedbackForm" class="tool-card hover-lift">
+            <span class="tool-icon">📢</span>
+            <span>Fazer avaliação</span>
+          </a>
+          <a href="#feedList" class="tool-card hover-lift">
+            <span class="tool-icon">📋</span>
+            <span>Minhas avaliações</span>
+          </a>
+          <a href="#reputacoesSection" class="tool-card hover-lift">
+            <span class="tool-icon">🛡️</span>
+            <span>Detectar site confiável</span>
+          </a>
+          <a href="#patrocinadoresArea" class="tool-card hover-lift">
+            <span class="tool-icon">🏆</span>
+            <span>Guia Melhores Produtores</span>
+          </a>
+        </div>
       </div>
 
-      <form id="loginForm">
-        <div class="form-group">
-          <label for="loginEmail">E-mail:</label>
-          <input type="email" id="loginEmail" placeholder="elisio@gmail.com" required>
-        </div>
-        <div class="form-group">
-          <label for="loginPassword">Senha:</label>
-          <input type="password" id="loginPassword" placeholder="Sua senha" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Entrar na Conta</button>
-      </form>
+      <div class="hero-image-side">
+        <div class="hero-banner-box hover-lift" id="appPromotionalBanner">
+          <button class="btn-close-banner" onclick="fecharBannerApp()" title="Fechar banner">✕</button>
 
-      <form id="registerForm" style="display: none;">
-        <div class="form-group">
-          <label for="regName">Nome Completo:</label>
-          <input type="text" id="regName" placeholder="Seu nome" required>
-        </div>
-        <div class="form-group">
-          <label for="regEmail">E-mail:</label>
-          <input type="email" id="regEmail" placeholder="seuemail@exemplo.com" required>
-        </div>
-        <div class="form-group">
-          <label for="regPassword">Criar Senha:</label>
-          <input type="password" id="regPassword" placeholder="Crie uma senha segura" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Concluir Cadastro</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Conteúdo Principal -->
-  <main class="main-wrapper">
-    <div class="dashboard-grid">
-      
-      <!-- Formulário Lateral -->
-      <aside class="sidebar-area">
-        <section class="card">
-          <div class="card-header">
-            <h2>Novo Feedback</h2>
-            <p>Deixe um elogio, sugestão construtiva ou alerta.</p>
+          <h3>Cultivo com Segurança & Transparência</h3>
+          <p>Conectando compradores, viveiros e produtores de Adenium em todo o Brasil.</p>
+          <div class="app-badges-hero">
+            <button class="app-btn hover-shine" onclick="registrarDownloadApp('Google Play')">Baixe no <strong>Google Play</strong></button>
+            <button class="app-btn hover-shine" onclick="registrarDownloadApp('App Store')">Baixe na <strong>Apple Store</strong></button>
           </div>
-          <form id="reviewForm">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-container" id="descontosSection">
+    <div class="section-title-box">
+      <h2>Descontos para economizar no seu cultivo</h2>
+      <p>Parceiros e produtores no Adenium Avalia com ofertas e cupons ativos para você usar.</p>
+    </div>
+
+    <div class="coupons-grid">
+      <div class="coupon-card hover-lift">
+        <div class="coupon-logo">🌸 PEAN</div>
+        <h4>PEAN Flores</h4>
+        <span class="coupon-tag">🏷️ 15% OFF Substratos</span>
+      </div>
+      <div class="coupon-card hover-lift">
+        <div class="coupon-logo">🌿 Viveiro M.A</div>
+        <h4>Viveiro M.A.</h4>
+        <span class="coupon-tag">🏷️ Frete Grátis Enxertos</span>
+      </div>
+      <div class="coupon-card hover-lift">
+        <div class="coupon-logo">🌱 Adubos</div>
+        <h4>Nutri Plantas</h4>
+        <span class="coupon-tag">🏷️ 1 Cupom Ativo</span>
+      </div>
+      <div class="coupon-card hover-lift">
+        <div class="coupon-logo">🏺 Vasos CE</div>
+        <h4>Vasos & Arte</h4>
+        <span class="coupon-tag">🏷️ 10% OFF na Primeira Compra</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-container section-alt" id="reputacoesSection">
+    <div class="section-title-box">
+      <h2>O que considerar ao pesquisar um produtor ou viveiro?</h2>
+      <p>Entenda os critérios de confiança e transparência da nossa comunidade.</p>
+    </div>
+
+    <div class="reputation-grid">
+      <div class="rep-card hover-lift">
+        <span class="rep-icon">😃</span>
+        <h3>Reputação Transparente</h3>
+        <p>Calculada diretamente a partir da avaliação e nota dada por compradores reais após o recebimento.</p>
+      </div>
+
+      <div class="rep-card hover-lift">
+        <span class="rep-icon">🏆</span>
+        <h3>Selo Adenium 1000</h3>
+        <p>A maior reputação da plataforma. Concedida a produtores com excelência no atendimento e pós-venda.</p>
+      </div>
+
+      <div class="rep-card hover-lift">
+        <span class="rep-icon">✓</span>
+        <h3>Empresa Verificada</h3>
+        <p>Selo de segurança concedido após verificação completa de CNPJ, cultivo e dados de envio.</p>
+      </div>
+
+      <div class="rep-card hover-lift">
+        <span class="rep-icon">🎖️</span>
+        <h3>Campeã da Comunidade</h3>
+        <p>Produtores que se destacaram no suporte ao cliente e solução de problemas através de votação.</p>
+      </div>
+    </div>
+  </section>
+
+  <main class="main-container">
+    <div class="content-grid">
+
+      <section class="left-column">
+        <div class="card-box main-card hover-lift" id="feedbackForm">
+          <div class="card-header-title">
+            <span class="icon-header">✍️</span>
+            <div>
+              <h3>Fazer uma Avaliação</h3>
+              <p class="card-subtitle">Sua avaliação passará por análise prévia do administrador antes da publicação pública.</p>
+            </div>
+          </div>
+          
+          <form onsubmit="event.preventDefault(); enviarNovoFeedback();">
             <div class="form-group">
-              <label for="producerName">Nome do Produtor de Adenium:</label>
-              <input type="text" id="producerName" placeholder="Ex: Viveiro Adenium - Fortaleza/CE" required>
+              <label>Seu Nome / Apelido:</label>
+              <input type="text" id="inputAutor" placeholder="Ex: João M." required>
             </div>
 
             <div class="form-group">
-              <label for="rating">Classificação do Atendimento/Planta:</label>
-              <select id="rating" required>
+              <label>Produtor / Viveiro / Empresa:</label>
+              <input type="text" id="inputProdutor" placeholder="Ex: PEAN Flores - Fortaleza/CE" required>
+            </div>
+
+            <div class="form-group">
+              <label>Classificação:</label>
+              <select id="selectNota">
                 <option value="5">⭐⭐⭐⭐⭐ Excelente (5/5)</option>
                 <option value="4">⭐⭐⭐⭐ Bom (4/5)</option>
-                <option value="3">⭐⭐⭐ Regular / Construtivo (3/5)</option>
-                <option value="2">⭐⭐ Ruim / Alerta (2/5)</option>
+                <option value="3">⭐⭐⭐ Regular (3/5)</option>
+                <option value="2">⭐⭐ Ruim (2/5)</option>
                 <option value="1">⭐ Péssimo (1/5)</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="reviewText">Seu relato (Construtivo ou Negativo):</label>
-              <textarea id="reviewText" rows="4" placeholder="Descreva sua experiência: ponto forte, o que precisa melhorar ou alertas sobre envio/qualidade..." required></textarea>
+              <label>Seu Relato Detalhado:</label>
+              <textarea id="inputRelato" rows="3" placeholder="Conte sua experiência com o atendimento, embalagem e saúde das plantas..." required></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary">Enviar Feedback</button>
+            <button type="submit" class="btn-submit hover-shine">Enviar para Análise do Admin</button>
           </form>
-        </section>
-      </aside>
-
-      <!-- Feed / Painel de Moderação -->
-      <section class="feed-area">
-        <div class="feed-header">
-          <h2 id="feedTitle">Feedbacks Verificados</h2>
-          <span class="feed-count" id="feedCount">0 publicações</span>
         </div>
-        
-        <div id="reviewsList" class="reviews-stack"></div>
+
+        <div class="main-card admin-moderation-box hover-lift" id="painelAdminSection">
+          <div class="section-header">
+            <h3>🛡️ Moderação de Avaliações (Admin)</h3>
+            <span class="badge-count warning" id="badgeModeracaoCount">0 Pendentes</span>
+          </div>
+          <p class="card-subtitle">Análise prévia para aprovação ou rejeição antes da publicação.</p>
+          <div id="listaModeracaoPendentes" class="moderacao-list"></div>
+        </div>
+      </section>
+
+      <section class="right-column">
+        <div class="feed-reviews-section main-card hover-lift">
+          <div class="section-header">
+            <h3>💬 Avaliações Públicas e Verificadas</h3>
+            <span class="badge-count" id="badgeAprovadasCount">0 Publicadas</span>
+          </div>
+
+          <div class="feed-list" id="feedList"></div>
+        </div>
       </section>
 
     </div>
+
+    <section class="sponsors-section main-card hover-lift" id="patrocinadoresArea">
+      <div class="sponsors-header">
+        <div>
+          <h2>🏢 Para o seu Negócio: Seja um Parceiro Verificado</h2>
+          <p>Divulgue seu viveiro, eventos, Instagram e ganhe destaque oficial na comunidade.</p>
+        </div>
+        <button class="btn-patrocinio-action hover-shine" onclick="alert('Formulário de cadastro comercial em breve!')">+ Cadastrar Empresa</button>
+      </div>
+
+      <div class="sponsors-grid">
+        <div class="sponsor-card hover-lift">
+          <div class="sponsor-badge">✓ Verificado</div>
+          <h3>PEAN Flores & Cultivo</h3>
+          <p>Especialista em exemplares de <em>Adenium arabicum</em>, enxertos selecionados e insumos.</p>
+          <a href="https://instagram.com" target="_blank" class="sponsor-link">Ver Perfil no Instagram →</a>
+        </div>
+
+        <div class="sponsor-card hover-lift">
+          <div class="sponsor-badge">✓ Verificado</div>
+          <h3>Orquidário & Viveiro M.A.</h3>
+          <p>Matrizes, substratos específicos e consultoria técnica de cultivo.</p>
+          <a href="https://instagram.com" target="_blank" class="sponsor-link">Ver Perfil no Instagram →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-container">
+      <div class="section-title-box">
+        <h2>Fique por dentro das novidades no blog</h2>
+        <p>Guias de compras, dicas de segurança no cultivo e direitos do comprador.</p>
+      </div>
+
+      <div class="blog-grid" id="fiqueGrid"></div>
+    </section>
   </main>
 
-  <footer class="footer">
-    <div class="footer-container">
-      <p><strong>Adenium Avalia 🌸</strong> — Espaço para feedbacks construtivos e reputação de produtores de Adenium.</p>
-      <p>&copy; 2026 Todos os direitos reservados.</p>
+  <footer class="footer-dark-theme">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 class="footer-title">Navegação</h4>
+          <ul class="footer-links">
+            <li><a href="#modalAuth" onclick="abrirModalAuth('cadastro')">Criar conta</a></li>
+            <li><a href="#feedbackForm">Fazer avaliação</a></li>
+            <li><a href="#feedList">Últimas avaliações</a></li>
+            <li><a href="#reputacoesSection">Guia de Reputação</a></li>
+            <li><a href="#descontosSection">Cupons e Descontos</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Para o seu negócio</h4>
+          <ul class="footer-links">
+            <li><a href="#patrocinadoresArea">Cadastrar seu viveiro</a></li>
+            <li><a href="#painelAdminSection">Responder avaliações</a></li>
+            <li><a href="#patrocinadoresArea">Selos de Verificação</a></li>
+            <li><a href="#patrocinadoresArea">Planos de Anúncios</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-title">Conteúdos & Dicas</h4>
+          <ul class="footer-links">
+            <li><a href="#fiqueGrid">Blog Adenium Educa</a></li>
+            <li><a href="#reputacoesSection">Selo Produtor 1000</a></li>
+            <li><a href="#" onclick="alert('CDC: Garantia de 7 dias em compras online e proteção ao consumidor.')">Direitos do Comprador (CDC)</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col footer-col-brand">
+          <div class="footer-brand">🌸 Adenium <strong>Avalia</strong></div>
+          <p class="footer-desc">A plataforma oficial de reputação e transparência para o mercado de Rosa do Deserto no Brasil.</p>
+          <div class="footer-apps-row">
+            <button class="footer-app-btn hover-shine" onclick="registrarDownloadApp('Google Play')">Google Play</button>
+            <button class="footer-app-btn hover-shine" onclick="registrarDownloadApp('App Store')">Apple Store</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <span>&copy; 2026 <strong>Adenium Avalia</strong>. Todos os direitos reservados.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacidade</a>
+          <span>•</span>
+          <a href="#">Termos de Uso</a>
+          <span>•</span>
+          <a href="#">Suporte</a>
+        </div>
+      </div>
     </div>
   </footer>
 
